@@ -73,7 +73,7 @@ Use these cases to confirm that success and failure states behave correctly.
 | # | Scenario | Steps | Expected result |
 | --- | --- | --- | --- |
 | 1 | Successful payment | Card `4242 4242 4242 4242`, any future expiry, CVC `123`, ZIP `90210` | The button changes to "Processing...", the payment completes, and the app redirects to `/success` showing the PaymentIntent ID (`pi_...`) and the total charged. |
-| 2 | Inline card decline | Card `4000 0000 0000 0002` or `4000 0000 0000 0069` (Blocked Card) any future expiry, CVC `123`, ZIP `90210` | An inline error message appears, the button unlocks, and the label resets to "Pay Now". |
+| 2 | Inline card decline | Card `4000 0000 0000 0002` (expired card) or `4000 0000 0000 0069` (Declined Card) any future expiry, CVC `123`, ZIP `90210` | An inline error message appears, the button unlocks, and the label resets to "Pay Now". |
 | 3 | Direct access to `/success` | Open `http://localhost:3000/success` without paying | The success card is hidden. The page shows "Error: No Payment intent found" and a **Return to Shop** button. |
 
 ## Approaching the Problem
