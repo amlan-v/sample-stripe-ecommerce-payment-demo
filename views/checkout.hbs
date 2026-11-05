@@ -50,7 +50,12 @@
     const stripe = Stripe(publishableKey);
     const elements = stripe.elements({ clientSecret });
 
-    const paymentElement = elements.create('payment');
+    const paymentElement = elements.create('payment', {
+    wallets: {
+    link: 'never'
+    }
+    });
+    
     paymentElement.mount('#payment-element');
 
     const form = document.getElementById('payment-form');
