@@ -1,0 +1,35 @@
+<main>
+  {{#unless error}}
+    <div class="mt-40 text-center text-success">
+      <h1>
+        <i class="far fa-check-circle"></i> 
+        Success!
+      </h1>
+    </div>
+
+    <div class="row justify-content-md-center mt-40">
+      <div class="col-6">
+        <div class="card box-shadow">
+          <div class="card-body">
+            <h4 class="card-title text-center">Thank you for your purchase!</h4>
+            <p class="text-secondary text-center mt-10">
+              Your payment has been successfully processed.
+            </p>
+            <hr>
+            <div class="mt-20">
+              <p><strong>Payment Intent ID:</strong> <code>{{paymentIntentId}}</code></p>
+              <p><strong>Total Charged:</strong> $<span class="amount" data-amount="{{amount}}"></span></p>
+            </div>
+            <div class="mt-30 text-center">
+              <a href="/" class="btn btn-outline-primary">Return to Shop</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {{else}}
+    <div class="mt-40 text-center">
+      <a href="/" class="btn btn-outline-primary">Return to Shop</a>
+    </div>
+  {{/unless}}
+</main>

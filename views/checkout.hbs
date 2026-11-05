@@ -1,0 +1,83 @@
+<div class="row justify-content-md-center">
+  <div class="col-6">
+    <div class="text-center mt-40">
+      <h1>
+        Checkout — Stripe Press
+      </h1>
+      <h5 class="text-secondary">
+        {{title}}
+      </h5>
+      <hr class="mt-40">
+      <div class="mt-20 text-info">
+        Total due: $<span class="amount" data-amount="{{amount}}"></span>
+      </div>
+    </div>
+    <div class="card box-shadow mt-40">
+      <div class="card-body">
+        <form id="payment-form" name="payment-form">
+          <div>
+            <label for="email">Email address</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="you@email.com" required>
+          </div>
+
+          <!-- Stripe Payment Element Mount Point -->
+          <div class="mt-20" id="payment-element"></div>
+
+          <!-- Error message container -->
+          <div id="error-message" class="text-danger mt-20" role="alert"></div>
+
+          <div class="mt-20">
+            <button id="submit-button" type="submit" class="btn btn-lg btn-block btn-primary">
+              <span id="button-text">Pay $<span class="amount" data-amount="{{amount}}"></span></span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Load Stripe.js -->
+<script src="https://js.stripe.com/v3/"></script>
+
+<script>
+  const publishableKey = "{{publishableKey}}";
+  const clientSecret = "{{clientSecret}}";
+
+  if (!publishableKey || !clientSecret) {
+    document.getElementById('error-message').textContent = "Configuration error: Missing Stripe credentials.";
+  } else {
+    const stripe = Stripe(publishableKey);
+    const elements = stripe.elements({ clientSecret });
+
+    const paymentElement = elements.create('payment');
+    paymentElement.mount('#payment-element');
+
+    const form = document.getElementById('payment-form');
+    const submitBtn = document.getElementById('submit-button');
+    const buttonText = document.getElementById('button-text');
+    const errorMsg = document.getElementById('error-message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      submitBtn.disabled = true;
+      buttonText.textContent = "Processing...";
+      errorMsg.textContent = "";
+
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: window.location.origin + '/success',
+          receipt_email: document.getElementById('email').value,
+        },
+      });
+
+      if (error) {
+        errorMsg.textContent = error.message;
+        submitBtn.disabled = false;
+        buttonText.textContent = "Pay Now";
+      }
+    });
+  }
+</script>
