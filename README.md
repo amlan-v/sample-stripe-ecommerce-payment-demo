@@ -73,10 +73,10 @@ Use these cases to confirm that success and failure states behave correctly.
 | # | Scenario | Steps | Expected result |
 | --- | --- | --- | --- |
 | 1 | Successful payment | Card `4242 4242 4242 4242`, any future expiry, CVC `123`, ZIP `90210` | The button changes to "Processing...", the payment completes, and the app redirects to `/success` showing the PaymentIntent ID (`pi_...`) and the total charged. |
-| 2 | Inline card decline | Card `4000 0000 0000 0002` (generic decline) or `4000 0000 0000 0069` (expired card) | An inline error message appears, the button unlocks, and the label resets to "Pay Now". |
+| 2 | Inline card decline | Card `4000 0000 0000 0002` or `4000 0000 0000 0069` (Blocked Card) any future expiry, CVC `123`, ZIP `90210` | An inline error message appears, the button unlocks, and the label resets to "Pay Now". |
 | 3 | Direct access to `/success` | Open `http://localhost:3000/success` without paying | The success card is hidden. The page shows "Error: No Payment intent found" and a **Return to Shop** button. |
 
-## Approach
+## Approaching the Problem
 
 1. **Set up the project.** I followed the provided setup instructions.
 2. **Reviewed the starter code.** I went through the boilerplate to understand which parts I needed to change and how they work together, including the basics of the imported packages and the Stripe SDK in `app.js`. Comments in the code showed which sections belonged to the home, checkout, and success pages, and where to add error handling.
