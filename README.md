@@ -94,7 +94,7 @@ Use these cases to confirm that success and failure states behave correctly.
 
 The server controls pricing and verifies every payment. The browser only displays pages and confirms the payment. Card details go straight to Stripe and never reach the server.
 
-![Stripe Press payment flow](docs/architecture-flow.png)
+![Stripe Press payment flow](docs/architecture.png)
 
 1. **Browse and select.** The home page (`GET /`) lists three books. Clicking **Purchase** opens `GET /checkout?item=1|2|3`.
 2. **Create the payment.** The server looks up the book's price (hardcoded, in cents) and creates a Stripe **PaymentIntent** in USD with automatic payment methods. It sends the `client_secret` and your publishable key to the checkout page.
