@@ -84,7 +84,7 @@ Use these cases to confirm that success and failure states behave correctly.
 4. **Researched the Stripe Elements vs Stripe Checkout.** I watched videos to understand the difference between Stripe Checkout and Stripe Elements.
 5. **Built the checkout flow.** I used the PaymentIntent code in Stripe's API documentation and adapted it to Node.js. Because the Node.js code used `await` as the operator, I made the function `async`. The checkout page still didn't show the payment options, so I updated `checkout.hbs` to reflect that.
 6. **Fixed the credentials error.** A missing-credentials error remained in checkout page, so I updated `app.js` api key as environment variable and initialized Stripe and render the payment. 
-7. **Tested with Stripe test cards.** Using Stripe's testing documentation I testing the credit card payment method, I reached the success page, but it didn't show the PaymentIntent ID or the amount. I added both amount and payment intent ID following the hints in the code comments, and updated `success.hbs` to display them.
+7. **Tested with Stripe test cards.** Using Stripe's testing documentation I tested the credit card payment method, I reached the success page, but it didn't show the PaymentIntent ID or the amount. I added both amount and payment intent ID following the hints in the code comments, and updated `success.hbs` to display them.
 8. **Handled edge cases.** The app worked, but edge cases remained, so I made iterative changes to cover them:
    - False success confirmations
    - Double submission
