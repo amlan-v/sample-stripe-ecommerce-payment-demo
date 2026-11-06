@@ -94,7 +94,7 @@ Use these cases to confirm that success and failure states behave correctly.
 
 The server controls pricing and verifies every payment. The browser only displays pages and confirms the payment. Card details go straight to Stripe and never reach the server.
 
-[![Stripe Press payment flow](docs/architecture-flow.png)](docs/architecture.png)
+[![Stripe Press payment flow](docs/architecture-flow.png)]
 
 1. **Browse and select.** The home page (`GET /`) lists three books. Clicking **Purchase** opens `GET /checkout?item=1|2|3`.
 2. **Create the payment.** The server looks up the book's price (hardcoded, in cents) and creates a Stripe **PaymentIntent** in USD with automatic payment methods. It sends the `client_secret` and your publishable key to the checkout page.
@@ -113,7 +113,7 @@ The server controls pricing and verifies every payment. The browser only display
 - [Stripe testing](https://docs.stripe.com/testing): test card numbers and scenarios.
 
 
-## Challenges Encountered and How I Solved Them
+## Design Challenges Encountered and How I Solved Them
 
 ### 1. False-positive success confirmations
 
@@ -131,3 +131,35 @@ The server controls pricing and verifies every payment. The browser only display
 
 - **Problem:** When a payment fails inline (for example, a wrong CVC, an expired card, or insufficient funds), the form has to unlock without a page reload. Restoring the button label with the starter template's currency `<span>` produced the label "Pay $", because the currency formatting script (`custom.js`) runs only once, when the page first loads.
 - **Solution:** In `checkout.hbs`, the error handler re-enables the button (`submitBtn.disabled = false`) and sets a static label: `buttonText.textContent = "Pay Now"`. Customers can now correct their card details without refreshing the page.
+
+## General Challenges Encountered and How I Solved Them
+
+### 1. Connecting Existing Templates, Express, and Stripe
+* **The Challenge:** While the starter templates and basic Express setup were already provided, I had not wired together a full-stack flow before. Having some JavaScript background helped, but figuring out how to plug the Stripe API into the existing routes and pass data back and forth took trial and error.
+* **How I Solved It:** I tackled one piece at a time. I first verified the existing routes rendered properly, tested passing mock data to the templates, and only then integrated the Stripe payment calls into the server and client scripts.
+
+### 2. Adapting Existing Handlebars Templates and Bootstrap Layouts
+* **The Challenge:** The starter code already relied on Handlebars (`.hbs`) and Bootstrap. Rather than writing markup from scratch, I had to understand an existing codebase—such as learning how Handlebars injects variables like `{{clientSecret}}` into `<script>` tags and where to replace placeholder `<div>` tags with the live Stripe Element.
+* **How I Solved It:** I referenced the Handlebars documentation and inspected the rendered HTML in the browser to confirm where the template logic ended and client JavaScript began. Using the existing Bootstrap classes made it easy to keep error boxes and buttons visually aligned without writing custom CSS.
+
+### 3. Moving from No-Code / cURL to Code Libraries
+* **The Challenge:** My usual API experience involves low-code tools or cURL requests where you pass inputs and inspect responses visually. Translating that mental model into writing Node.js code with the official `stripe` SDK was unfamiliar territory.
+* **How I Solved It:** Stripe's documentation displays cURL commands side-by-side with Node.js snippets. This let me map parameters I understood in cURL directly to SDK functions like `stripe.paymentIntents.create()`.
+
+## Documentation Used
+
+- [Working with Stripe Elements and Checkout Sessions](https://www.youtube.com/watch?v=aW6AcSR1Oyg&t=2408s)
+- [GitHub](https://github.com/stripe-samples)
+
+## Extending This for a Production-Ready Application
+
+If this were a more robust, production-grade application, I would make these improvements:
+
+### 1. Reuse PaymentIntents & Add Idempotency
+- **Why:** The checkout route calls `stripe.paymentIntents.create()` on every page load[cite: 6]. If a user refreshes the page, new orphaned intents are created in Stripe, risking duplicate charges during network retries[cite: 6]. Reusing an existing `clientSecret` from a session or passing an idempotency key resolves this with minimal code[cite: 6].
+
+### 2. Enhanced Error & Decline Handling
+- **Why:** The current implementation dumps raw error strings (`err.message`) directly into the UI without categorizing decline reasons or sending appropriate HTTP status codes[cite: 4, 6]. Mapping standard Stripe decline codes to actionable client guidance prevents abandoned checkouts with very few lines of code[cite: 4].
+
+### 3. Currency and Locale Formatting (`Intl.NumberFormat`)
+- **Why:** Amounts are passed as raw cent integers and injected into DOM data attributes (`data-amount="{{amount}}"`)[cite: 4, 5, 6]. Adding a brief Handlebars helper using the native `Intl.NumberFormat` API formats localized currency directly from the server, removing reliance on client-side script formatting[cite: 4, 6].
